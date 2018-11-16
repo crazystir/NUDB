@@ -3,8 +3,8 @@
 
 #define LEN 64
 
-extern const char db_username[LEN]; 
-extern const char db_password[LEN]; 
-extern const char db[LEN]; 
+extern char db_username[LEN]; 
+extern char db_password[LEN]; 
+extern char db[LEN]; 
 
 #endif

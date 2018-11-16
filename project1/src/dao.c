@@ -9,15 +9,18 @@
 
 #define STMT_LEN 2048 
 
-const char db_username[LEN] = "root";
-const char db_passwd[LEN] = "123";
-const char db[LEN] = "project3-nudb";
+char db_username[LEN] = "root";
+char db_passwd[LEN] = "123";
+char db[LEN] = "project3-nudb";
 
 static MYSQL *conn;
 
+static void GetDBInfo();
 static void Retrieve(struct result_t* ret, MYSQL_RES *res); 
 
 int DBInit() {
+    GetDBInfo();
+
     if ((conn = mysql_init(NULL)) == NULL) {
         fprintf(stderr, "Could not init DB\n");
         return -1;
@@ -85,32 +88,6 @@ int GetValuesByField(const struct result_t *res, const char *field, char ret[RES
     return -1;
 }
 
-void Retrieve(struct result_t *ret, MYSQL_RES *res) {
-    MYSQL_FIELD *fields;
-    MYSQL_ROW row;
-    int i = 0,  j;
-
-    ret -> num_of_fields_ = (int)mysql_num_fields(res);
-    fields = mysql_fetch_fields(res);
-
-    for (j = 0; j < ret -> num_of_fields_; j++) {
-        strncpy(ret -> fields_[j], fields[j].name, FIELD_LEN); 
-    }
-
-    while ((row = mysql_fetch_row(res))) {
-        for (j = 0; j < ret -> num_of_fields_; j++) {
-            if (!row[j]) {
-                strcpy(ret -> values_[j][i], "NULL");
-            } else {
-                strncpy(ret -> values_[j][i], row[j], VALUE_LEN);
-            }
-        }
-        i++;
-    } 
-
-    ret -> num_of_values_ = i;
-}
-
 
 int PrintResult(const struct result_t *res) {
     int i, j;
@@ -157,4 +134,38 @@ int PrintResultRowVertical(const struct result_t *res, int row) {
     return 0;
 }
 
+void Retrieve(struct result_t *ret, MYSQL_RES *res) {
+    MYSQL_FIELD *fields;
+    MYSQL_ROW row;
+    int i = 0,  j;
 
+    ret -> num_of_fields_ = (int)mysql_num_fields(res);
+    fields = mysql_fetch_fields(res);
+
+    for (j = 0; j < ret -> num_of_fields_; j++) {
+        strncpy(ret -> fields_[j], fields[j].name, FIELD_LEN); 
+    }
+
+    while ((row = mysql_fetch_row(res))) {
+        for (j = 0; j < ret -> num_of_fields_; j++) {
+            if (!row[j]) {
+                strcpy(ret -> values_[j][i], "NULL");
+            } else {
+                strncpy(ret -> values_[j][i], row[j], VALUE_LEN);
+            }
+        }
+        i++;
+    } 
+
+    ret -> num_of_values_ = i;
+}
+
+void GetDBInfo() {
+    printf("Input database username: ");
+    scanf("%s", db_username);
+    printf("Input database password: ");
+    scanf("%s", db_passwd);
+    printf("Input database name: ");
+    scanf("%s", db);
+    getchar();
+}

@@ -67,9 +67,11 @@ static const char bounder[] = "*************************************************
  
 
 int main() {
- DBInit();
- InitStatus();
  Clear();
+ if (DBInit() < 0) {
+    return -1;
+ }
+ InitStatus();
 
  while (nu_status.status_ != EXIT) {
      switch (nu_status.status_) {
